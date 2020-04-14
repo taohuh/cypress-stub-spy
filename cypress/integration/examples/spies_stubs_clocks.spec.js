@@ -76,7 +76,7 @@ context('Spies, Stubs, and Clock', () => {
     cy.get('@getLastname').should('have.been.calledOnce')
   })
 
-  it.only('cy.stub() - create a stub and/or replace a function with stub', () => {
+  it('cy.stub() - create a stub and/or replace a function with stub', () => {
     // https://on.cypress.io/stub
     cy.visit('https://example.cypress.io/commands/spies-stubs-clocks')
 
@@ -93,7 +93,7 @@ context('Spies, Stubs, and Clock', () => {
 
     const stub = cy.stub(obj, 'foo').as('foo')
 
-    obj.foo('sdfsaf', 'sdfasdf')
+    obj.foo('I am a', 'I am b')
 
     expect(stub).to.be.called
   })
@@ -125,5 +125,26 @@ context('Spies, Stubs, and Clock', () => {
     cy.tick(10000) // 10 seconds passed
     cy.get('#tick-div').click()
       .should('have.text', '1489449610')
+  })
+
+  describe('URL Schema Test', () => {
+    beforeEach(() => {
+      cy.visit('./url-schema.html')
+    })
+
+    it.only('it should click to navigate', () => {
+      // replacerFn
+      const mySetLocationHref = (url) => {
+        expect(url).to.eq('adafsd')
+      }
+
+      cy.window().then((win) => {
+        cy.stub(win, 'setLocationHref', mySetLocationHref).as('setLocationHref');
+      });
+
+      cy.get('[data-cy="link-tel"]').click();
+
+      cy.get('@setLocationHref').should('be.calledOnce')
+    })
   })
 })
